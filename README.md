@@ -4,8 +4,10 @@ https://arxiv.org/abs/1703.03130
 
 #### Requirments
 PyTorch: http://pytorch.org/
+
 spaCy: https://spacy.io/
 
+Please refer to https://github.com/pytorch/examples/tree/master/snli for the information about obtaining GloVe model (in PyTorch model format .pt). Typically, the model should be a tuple (dict, torch.FloatTensor, int), where the first element (dict) is a mapping from word to its index, the third element (int) is the dimension of the word embeddings, and the second element (torch.FloatTensor) with the size of word_count * dim refers to the word embeddings.
 
 #### Usage
 
@@ -42,4 +44,4 @@ python train.py \
 ```
 
 #### Differences between the paper and our implementation
-1. For faster python tokenizer, we used spaCy instead of Stanford Tokenizer (https://nlp.stanford.edu/software/tokenizer.shtml)
+1. For faster Python based tokenization, we used spaCy instead of Stanford Tokenizer (https://nlp.stanford.edu/software/tokenizer.shtml)
