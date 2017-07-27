@@ -47,3 +47,13 @@ python train.py \
 1. For faster Python based tokenization, we used spaCy instead of Stanford Tokenizer (https://nlp.stanford.edu/software/tokenizer.shtml)
 
 2. For faster performance, we manually crop the comments in Yelp to a max length of 500. 
+
+#### Example Experimental Command and Result
+
+We followed Lin et al.(2017) to generate the dataset, and obtained the following result:
+
+```bash
+python train.py --train-data "data/train.json" --val-data "data/dev.json" --test-data "data/test.json" --cuda --emsize 300 --nhid 300 --nfc 300 --dropout 0.5 --attention-unit 350 --epochs 10 --lr 0.001 --clip 0.5 --dictionary "data/Yelp/data/dict.json" --word-vector "data/GloVe/glove.42B.300d.pt" --save "models/model-medium.pt" --batch-size 50 --class-number 5 --optimizer Adam --attention-hops 4 --penalization-coeff 1.0 --log-interval 100
+# test loss (cross entropy loss, without the Frobenius norm penalization) 0.7544
+# test accuracy: 0.6690
+```
