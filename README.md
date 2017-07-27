@@ -45,3 +45,5 @@ python train.py \
 
 #### Differences between the paper and our implementation
 1. For faster Python based tokenization, we used spaCy instead of Stanford Tokenizer (https://nlp.stanford.edu/software/tokenizer.shtml)
+
+2. For faster performance, we manually crop the comments in Yelp to a max length of 500. 
