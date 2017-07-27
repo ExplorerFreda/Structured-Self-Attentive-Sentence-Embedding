@@ -1,11 +1,8 @@
-import numpy as np
-
+from __future__ import print_function
 import torch
 from torch.autograd import Variable
 import torch.nn as nn
 import os
-
-from pprint import pprint
 
 
 class BiLSTM(nn.Module):
@@ -23,7 +20,7 @@ class BiLSTM(nn.Module):
 #        self.init_weights()
         self.encoder.weight.data[self.dictionary.word2idx['<pad>']] = 0
         if os.path.exists(config['word-vector']):
-            print 'Loading word vectors from', config['word-vector']
+            print('Loading word vectors from', config['word-vector'])
             vectors = torch.load(config['word-vector'])
             assert vectors[2] >= config['ninp']
             vocab = vectors[0]
@@ -36,7 +33,7 @@ class BiLSTM(nn.Module):
                 loaded_id = vocab[word]
                 self.encoder.weight.data[real_id] = vectors[loaded_id][:config['ninp']]
                 loaded_cnt += 1
-            print '%d words from external word vectors loaded.' % loaded_cnt
+            print('%d words from external word vectors loaded.' % loaded_cnt)
 
     # note: init_range constraints the value of initial weights
     def init_weights(self, init_range=0.1):
@@ -55,8 +52,8 @@ class BiLSTM(nn.Module):
 
     def init_hidden(self, bsz):
         weight = next(self.parameters()).data
-        return Variable(weight.new(self.nlayers * 2, bsz, self.nhid).zero_()), Variable(
-            weight.new(self.nlayers * 2, bsz, self.nhid).zero_())
+        return (Variable(weight.new(self.nlayers * 2, bsz, self.nhid).zero_()),
+                Variable(weight.new(self.nlayers * 2, bsz, self.nhid).zero_()))
 
 
 class SelfAttentiveEncoder(nn.Module):
@@ -89,7 +86,7 @@ class SelfAttentiveEncoder(nn.Module):
         hbar = self.tanh(self.ws1(self.drop(compressed_embeddings)))  # [bsz*len, attention-unit]
         alphas = self.ws2(hbar).view(size[0], size[1], -1)  # [bsz, len, hop]
         alphas = torch.transpose(alphas, 1, 2).contiguous()  # [bsz, hop, len]
-        penalized_alphas = alphas +  (
+        penalized_alphas = alphas + (
             -10000 * (concatenated_inp == self.dictionary.word2idx['<pad>']).float())
             # [bsz, hop, len] + [bsz, hop, len]
         alphas = self.softmax(penalized_alphas.view(-1, size[1]))  # [bsz*hop, len]

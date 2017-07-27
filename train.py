@@ -1,4 +1,5 @@
-from models import *
+from __future__ import print_function
+# from models import *
 
 from util import Dictionary, get_args
 
@@ -11,7 +12,6 @@ import json
 import time
 import random
 import os
-from pprint import pprint
 
 
 def Frobenius(mat):
@@ -66,7 +66,7 @@ def train(epoch_number):
     global best_val_loss, best_acc
     model.train()
     total_loss = 0
-    total_pure_loss = 0 # without the penalization term
+    total_pure_loss = 0  # without the penalization term
     start_time = time.time()
     for batch, i in enumerate(range(0, len(data_train), args.batch_size)):
         data, targets = package(data_train[i:i+args.batch_size], volatile=False)
@@ -93,9 +93,9 @@ def train(epoch_number):
         if batch % args.log_interval == 0 and batch > 0:
             elapsed = time.time() - start_time
             print('| epoch {:3d} | {:5d}/{:5d} batches | ms/batch {:5.2f} | loss {:5.4f} | pure loss {:5.4f}'.format(
-                    epoch_number, batch, len(data_train) // args.batch_size,
-                    elapsed * 1000 / args.log_interval, total_loss[0] / args.log_interval, 
-                    total_pure_loss[0] / args.log_interval))
+                  epoch_number, batch, len(data_train) // args.batch_size,
+                  elapsed * 1000 / args.log_interval, total_loss[0] / args.log_interval, 
+                  total_pure_loss[0] / args.log_interval))
             total_loss = 0
             total_pure_loss = 0
             start_time = time.time()
@@ -107,8 +107,8 @@ def train(epoch_number):
     evaluate_start_time = time.time()
     val_loss, acc = evaluate()
     print('-' * 89)
-    print('| evaluation | time: {:5.2f}s | valid loss (pure) {:5.4f} | Acc {:8.4f}'.format(
-          (time.time() - evaluate_start_time), val_loss, acc))
+    fmt = '| evaluation | time: {:5.2f}s | valid loss (pure) {:5.4f} | Acc {:8.4f}'
+    print(fmt.format((time.time() - evaluate_start_time), val_loss, acc))
     print('-' * 89)
     # Save the model, if the validation loss is the best we've seen so far.
     if not best_val_loss or val_loss < best_val_loss:
@@ -118,7 +118,7 @@ def train(epoch_number):
         best_val_loss = val_loss
     else:  # if loss doesn't go down, divide the learning rate by 5.
         for param_group in optimizer.param_groups:
-            param_group['lr'] = param_group['lr'] * 0.2 
+            param_group['lr'] = param_group['lr'] * 0.2
     if not best_acc or acc > best_acc:
         with open(args.save[:-3]+'.best_acc.pt', 'wb') as f:
             torch.save(model, f)
@@ -145,12 +145,12 @@ if __name__ == '__main__':
     # Load Dictionary
     assert os.path.exists(args.train_data)
     assert os.path.exists(args.val_data)
-    print 'Begin to load the dictionary.'
+    print('Begin to load the dictionary.')
     dictionary = Dictionary(path=args.dictionary)
 
     best_val_loss = None
     best_acc = None
-    
+
     n_token = len(dictionary)
     model = Classifier({
         'dropout': args.dropout,
@@ -169,7 +169,7 @@ if __name__ == '__main__':
     if args.cuda:
         model = model.cuda()
 
-    print args
+    print(args)
     I = Variable(torch.zeros(args.batch_size, args.attention_hops, args.attention_hops))
     for i in range(args.batch_size):
         for j in range(args.attention_hops):
@@ -183,21 +183,22 @@ if __name__ == '__main__':
     elif args.optimizer == 'SGD':
         optimizer = optim.SGD(model.parameters(), lr=args.lr, momentum=0.9, weight_decay=0.01)
     else:
-        raise Exception('For other optimizers, please add it yourself. supported ones are: SGD and Adam.')
-    print 'Begin to load data.'
+        raise Exception('For other optimizers, please add it yourself. '
+                        'supported ones are: SGD and Adam.')
+    print('Begin to load data.')
     data_train = open(args.train_data).readlines()
     data_val = open(args.val_data).readlines()
     try:
         for epoch in range(args.epochs):
             train(epoch)
     except KeyboardInterrupt:
-        print ('-' * 89)
-        print 'Exit from training early.'
+        print('-' * 89)
+        print('Exit from training early.')
         data_val = open(args.test_data).readlines()
         evaluate_start_time = time.time()
         test_loss, acc = evaluate()
         print('-' * 89)
-        print('| test | time: {:5.2f}s | test loss (pure) {:5.4f} | Acc {:8.4f}'.format(
-              (time.time() - evaluate_start_time), test_loss, acc))
+        fmt = '| test | time: {:5.2f}s | test loss (pure) {:5.4f} | Acc {:8.4f}'
+        print(fmt.format((time.time() - evaluate_start_time), test_loss, acc))
         print('-' * 89)
         exit(0)

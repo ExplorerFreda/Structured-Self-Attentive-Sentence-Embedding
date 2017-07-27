@@ -1,3 +1,4 @@
+from __future__ import print_function
 import argparse
 import json
 import random
@@ -28,7 +29,8 @@ if __name__ == '__main__':
             for item in data['text']:
                 dictionary.add_word(item)
             if i % 100 == 99:
-                print '%d/%d files done, dictionary size: %d' % (i+1, len(lines), len(dictionary))
+                print('%d/%d files done, dictionary size: %d' %
+                      (i + 1, len(lines), len(dictionary)))
         fout.close()
 
     with open(args.dict, 'w') as fout:  # save dictionary for fast next process
