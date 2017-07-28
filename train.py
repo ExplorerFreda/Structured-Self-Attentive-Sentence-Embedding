@@ -94,7 +94,7 @@ def train(epoch_number):
             elapsed = time.time() - start_time
             print('| epoch {:3d} | {:5d}/{:5d} batches | ms/batch {:5.2f} | loss {:5.4f} | pure loss {:5.4f}'.format(
                   epoch_number, batch, len(data_train) // args.batch_size,
-                  elapsed * 1000 / args.log_interval, total_loss[0] / args.log_interval, 
+                  elapsed * 1000 / args.log_interval, total_loss[0] / args.log_interval,
                   total_pure_loss[0] / args.log_interval))
             total_loss = 0
             total_pure_loss = 0
