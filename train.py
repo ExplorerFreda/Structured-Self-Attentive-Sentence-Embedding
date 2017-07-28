@@ -1,5 +1,5 @@
 from __future__ import print_function
-# from models import *
+from models import *
 
 from util import Dictionary, get_args
 
